@@ -1,18 +1,17 @@
 @echo off
-REM CROWN & OAK - publish the generated page to git. Safe to run anytime:
-REM it is a no-op if the page has not changed, and only ever commits index.html.
+REM Publish the lowsec page into the wdeve site (wdeve/lowsec/). FAIL-CLOSED: refuses
+REM to publish an unlocked page and exits non-zero so a missing password surfaces.
 cd /d "%~dp0"
-REM Safety: never publish an unlocked page. The locked page contains the "const B =" blob.
 findstr /C:"const B =" index.html >nul
 if errorlevel 1 (
   echo publish: index.html is NOT locked -- refusing to push. Is EVE_PAGE_PASSWORD set?
-  exit /b 0
+  exit /b 1
 )
-git add index.html
+set "DEST=C:\Users\sales\wdeve\lowsec"
+if not exist "%DEST%" mkdir "%DEST%"
+copy /Y index.html "%DEST%\index.html" >nul
+pushd "C:\Users\sales\wdeve"
+git add lowsec/index.html
 git diff --cached --quiet
-if %ERRORLEVEL%==0 (
-  echo publish: no page change
-) else (
-  git commit -m "scout: update top 10"
-  git push
-)
+if %ERRORLEVEL%==0 ( echo publish: no page change ) else ( git commit -m "lowsec: update page" & git push )
+popd
