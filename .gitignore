@@ -1,0 +1,17 @@
+# venv + caches
+.venv/
+__pycache__/
+*.pyc
+
+# runtime + generated data (regenerable / large / local)
+scout.log
+scout_history.csv
+scout_history_demo.csv
+lowsec_scout.xlsx
+lowsec_scout_demo.xlsx
+lowsec_scout_demo.html
+systems_cache.json
+webhook_state.json
+*.tmp
+
+# the published page (index.html) and source ARE tracked
