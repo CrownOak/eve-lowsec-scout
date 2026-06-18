@@ -1,0 +1,62 @@
+name: run
+# Lowsec mining scout: append this hour's ESI snapshot, rebuild the danger history,
+# render the locked page, persist state to this repo, publish the page to wdeve.
+on:
+  schedule:
+    - cron: '7 * * * *'        # hourly, :07 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: run-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install deps
+        run: pip install --quiet openpyxl cryptography
+
+      - name: Run scout
+        env:
+          EVE_PAGE_PASSWORD: ${{ secrets.EVE_PAGE_PASSWORD }}
+        run: python lowsec_scout.py --no-threat --retain-days 21
+
+      - name: Persist state to this repo
+        run: |
+          git config user.name  "eve-ops-bot"
+          git config user.email "eve-ops-bot@users.noreply.github.com"
+          git add -f scout_history.csv systems_cache.json webhook_state.json 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "state: $(date -u +%FT%TZ)"
+            for i in 1 2 3 4 5; do git push && break || { git pull --rebase; sleep $((RANDOM % 4 + 2)); }; done
+          fi
+
+      - name: Checkout wdeve
+        uses: actions/checkout@v4
+        with:
+          repository: CrownOak/wdeve
+          ssh-key: ${{ secrets.WDEVE_DEPLOY_KEY }}
+          path: _wdeve
+
+      - name: Publish page to wdeve
+        run: |
+          mkdir -p _wdeve/lowsec
+          cp index.html _wdeve/lowsec/index.html
+          cd _wdeve
+          git config user.name  "eve-ops-bot"
+          git config user.email "eve-ops-bot@users.noreply.github.com"
+          git add lowsec/index.html
+          if ! git diff --cached --quiet; then
+            git commit -m "lowsec: page update $(date -u +%FT%TZ)"
+            for i in 1 2 3 4 5; do git push && break || { git pull --rebase; sleep $((RANDOM % 4 + 2)); }; done
+          fi
