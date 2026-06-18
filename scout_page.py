@@ -71,6 +71,7 @@ def render_page(state):
   <div class="wrap">{body}</div>
   <footer>Safe, ore-suitable CANDIDATES. No API exposes live ore anomalies; warp in and
   scan to confirm. Page auto-refreshes every {REFRESH_SECONDS}s.</footer>
+<script src="https://crownoak.github.io/wdeve/nav.js"></script>
 </body></html>"""
 
 
