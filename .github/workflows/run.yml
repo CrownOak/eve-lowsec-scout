@@ -27,9 +27,7 @@ jobs:
         run: pip install --quiet openpyxl cryptography
 
       - name: Run scout
-        env:
-          EVE_PAGE_PASSWORD: ${{ secrets.EVE_PAGE_PASSWORD }}
-        run: python lowsec_scout.py --no-threat --retain-days 21
+        run: python lowsec_scout.py --no-threat --retain-days 21   # public page (no EVE_PAGE_PASSWORD = unlocked)
 
       - name: Persist state to this repo
         run: |
