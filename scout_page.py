@@ -13,6 +13,27 @@ def _fmt(v):
     return "" if v is None or v == "" else html.escape(str(v))
 
 
+TIPS = {
+    "#": "Rank by overall score (best mining candidate first).",
+    "SYSTEM": "System name. Click for the map on Dotlan.",
+    "SEC": "Security status, EVE-rounded to one decimal (0.1 to 0.4 = lowsec).",
+    "REGION": "Region the system is in.",
+    "SCORE": "Overall pick score: safety + ore suitability + low traffic, blended. Higher is better.",
+    "SAFE": "Safety sub-score 0 to 100, from live + recorded kill activity. Higher = quieter.",
+    "ORE": "Ore-suitability sub-score: how good this system looks for mining.",
+    "PVP1h": "PvP ship kills in this system in the last hour (live ESI).",
+    "JUMP": "Ship jumps through the system in the last hour (traffic; live ESI).",
+    "~AVG": "Average recorded PvP kills per hour over the danger-history window.",
+    "N": "Number of recorded snapshots in the window (more = more reliable average).",
+    "ZK": "Recent kills seen on zKillboard for the shortlist. Blank does NOT mean zero.",
+    "LASTh": "Hours since the last zKillboard kill here (blank if none seen / not checked).",
+}
+
+
+def _th(label):
+    return f"<th data-tip=\"{html.escape(TIPS.get(label, ''))}\">{label}</th>"
+
+
 def render_page(state):
     """Return a full self-contained HTML document for the given payload dict
     ({generated_at, space, region, threat, snapshots_in_window, systems:[...]})."""
@@ -53,16 +74,16 @@ def render_page(state):
                 f"<td class='num'>{_fmt(s.get('zk_last_h'))}</td></tr>")
         body = (
             "<table><thead><tr>"
-            "<th>#</th><th>SYSTEM</th><th>SEC</th><th>REGION</th>"
-            "<th>SCORE</th><th>SAFE</th><th>ORE</th><th>PVP1h</th><th>JUMP</th>"
-            "<th>~AVG</th><th>N</th><th>ZK</th><th>LASTh</th>"
-            "</tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
+            + _th("#") + _th("SYSTEM") + _th("SEC") + _th("REGION")
+            + _th("SCORE") + _th("SAFE") + _th("ORE") + _th("PVP1h") + _th("JUMP")
+            + _th("~AVG") + _th("N") + _th("ZK") + _th("LASTh")
+            + "</tr></thead><tbody>" + "".join(rows) + "</tbody></table>")
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="{REFRESH_SECONDS}">
 <title>Crown &amp; Oak - Lowsec Scout</title>
-<link rel="stylesheet" href="https://crownoak.github.io/wdeve/common.css?v=2"></head>
+<link rel="stylesheet" href="https://crownoak.github.io/wdeve/common.css?v=3"></head>
 <body>
   <header>
     <h1>CROWN &amp; OAK &middot; LOWSEC SCOUT</h1>
