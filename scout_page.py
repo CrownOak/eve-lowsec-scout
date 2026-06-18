@@ -100,9 +100,13 @@ def render_page(state):
 </body></html>"""
 
 
-def write_html(path, state):
-    """Atomically write render_page(state) to path. Returns the path."""
+def write_html(path, state, password=None):
+    """Atomically write render_page(state) to path. If password is given, the page
+    is client-side encrypted (content readable only after entering it). Returns path."""
     text = render_page(state)
+    if password:
+        import page_lock
+        text = page_lock.lock_page(text, password, title="Crown & Oak - Lowsec Scout")
     d = os.path.dirname(os.path.abspath(path)) or "."
     fd, tmp = tempfile.mkstemp(suffix=".html", dir=d)
     try:

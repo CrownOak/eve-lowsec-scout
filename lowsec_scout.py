@@ -677,8 +677,10 @@ def main():
             html_file = "lowsec_scout_demo.html" if a.demo else a.html
             try:
                 from scout_page import write_html
-                write_html(html_file, state)
-                print(f"  Wrote page {html_file}  (open in a browser; it self-refreshes)")
+                pw = os.environ.get("EVE_PAGE_PASSWORD")
+                write_html(html_file, state, pw)
+                lock = "locked (EVE_PAGE_PASSWORD)" if pw else "UNLOCKED (set EVE_PAGE_PASSWORD to lock)"
+                print(f"  Wrote page {html_file}  [{lock}]")
                 if a.open:
                     import webbrowser
                     webbrowser.open("file://" + os.path.abspath(html_file))
