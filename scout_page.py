@@ -62,7 +62,7 @@ def render_page(state):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="{REFRESH_SECONDS}">
 <title>Crown &amp; Oak - Lowsec Scout</title>
-<link rel="stylesheet" href="https://crownoak.github.io/wdeve/common.css"></head>
+<link rel="stylesheet" href="https://crownoak.github.io/wdeve/common.css?v=2"></head>
 <body>
   <header>
     <h1>CROWN &amp; OAK &middot; LOWSEC SCOUT</h1>

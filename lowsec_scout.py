@@ -108,6 +108,12 @@ def post_webhook(url, payload, token=None, timeout=10):
 # SYSTEM CACHE (name, security, truesec, region)  -- one-time SDE download
 # ----------------------------------------------------------------------------
 
+def eve_round(t):
+    """Security status the way EVE displays it: one decimal, rounded half away from
+    zero (so truesec 0.0747 shows 0.1, 0.45 shows 0.5), not raw two-decimal truesec."""
+    return (int(t * 10 + 0.5) if t >= 0 else -int(-t * 10 + 0.5)) / 10.0
+
+
 def build_system_cache():
     import json
     if os.path.exists(SYS_CACHE):
@@ -132,7 +138,7 @@ def build_system_cache():
             continue
         cache[row["solarSystemID"]] = {
             "name": row["solarSystemName"],
-            "sec": round(true, 2),        # rounded, for band + display
+            "sec": eve_round(true),       # EVE-displayed security (1 decimal, half up)
             "truesec": round(true, 4),    # precise, drives ore-potential
             "region_id": rid,
             "region": regions.get(rid, rid),
@@ -144,9 +150,10 @@ def build_system_cache():
 
 
 def in_band(sec, space):
-    if space == "lowsec": return 0.05 <= sec < 0.45
-    if space == "hisec":  return sec >= 0.45
-    if space == "null":   return sec < 0.05
+    # sec is the EVE-displayed value: lowsec 0.1-0.4, hisec >= 0.5, null <= 0.0
+    if space == "lowsec": return 0.0 < sec < 0.5
+    if space == "hisec":  return sec >= 0.5
+    if space == "null":   return sec <= 0.0
     return True  # "all"
 
 
