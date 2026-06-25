@@ -83,7 +83,7 @@ def render_page(state):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="{REFRESH_SECONDS}">
 <title>Crown &amp; Oak - Lowsec Scout</title>
-<link rel="stylesheet" href="https://crownoak.github.io/wdeve/common.css?v=3"></head>
+<link rel="stylesheet" href="/common.css?v=3"></head>
 <body>
   <header>
     <h1>CROWN &amp; OAK &middot; LOWSEC SCOUT</h1>
@@ -92,7 +92,7 @@ def render_page(state):
   <div class="wrap">{body}</div>
   <footer>Safe, ore-suitable CANDIDATES. No API exposes live ore anomalies; warp in and
   scan to confirm. Page auto-refreshes every {REFRESH_SECONDS}s.</footer>
-<script src="https://crownoak.github.io/wdeve/nav.js"></script>
+<script src="/nav.js?v=2"></script>
 </body></html>"""
 
 
